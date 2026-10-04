@@ -1,4 +1,8 @@
+import { MONSTER_TYPES } from "../../config/constants";
 export default function getTemplate() {
+  const typeOptions = MONSTER_TYPES
+    .map((t) => `<option value="${t}">${t}</option>`)
+    .join("");
   return `
     <aside class="deco-frame md:w-1/3 p-6 bg-[var(--murk)]/60 self-start">
       <h2 class="display text-2xl mb-5 text-[var(--pearl)]">File a new creature</h2>
@@ -12,12 +16,7 @@ export default function getTemplate() {
         <label class="block mb-4 text-[var(--silver)]">
           Type
           <select id="add-type" class="field" required>
-            <option value="Giant reptile">Giant reptile</option>
-            <option value="Alien">Alien</option>
-            <option value="Mutant">Mutant</option>
-            <option value="Giant insect">Giant insect</option>
-            <option value="Robot">Robot</option>
-            <option value="Deep-sea creature">Deep-sea creature</option>
+             ${typeOptions}
           </select>
         </label>
 
