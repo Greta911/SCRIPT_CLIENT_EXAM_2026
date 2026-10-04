@@ -1,5 +1,10 @@
 export default function getTemplate(monsterList) {
-  const rows = monsterList.filteredMonsters
+  //Sécurité au cas où monsterList ou filteredMonsters est undefined
+  const list = monsterList?.filteredMonsters || [];
+  const total = monsterList?.monsters?.length || 0;
+  const query = monsterList?.searchQuery || "";
+
+  const rows = list
     .map((monster) => monster.render())
     .join("");
 
