@@ -18,10 +18,10 @@ export default function getTemplate(monsterList) {
         </p>
       </div>
 
-      <!-- Filtro di ricerca -->
+      <!-- Recherche filtre -->
       <input type="search" id="search-input" class="field mb-5" placeholder="Search by name or type" value="${monsterList.searchQuery}" />
 
-      <!-- Tabella mostri -->
+      <!-- Tableau monstres -->
       <div class="overflow-x-auto">
         <table class="monsters-table w-full">
           <thead>

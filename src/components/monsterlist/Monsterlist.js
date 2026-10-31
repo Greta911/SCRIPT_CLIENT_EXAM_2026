@@ -77,6 +77,19 @@ updateTableOnly(container) {
 
   //Gestion des événements: recherche, triage,modification, sauvegarde et elimination
   bindEvents(container, onUpdateCallback) {
+    // Sécurité en direct pour bloquer les flèches des inputs numériques
+    container.querySelector("#monsters-table-body").addEventListener("input", (e) => {
+      if (e.target.classList.contains("edit-danger")) {
+        let val = parseInt(e.target.value);
+        if (val > 5) e.target.value = 5;
+        if (val < 1) e.target.value = 1;
+      }
+      if (e.target.classList.contains("edit-year")) {
+        let val = parseInt(e.target.value);
+        if (val > 1969) e.target.value = 1969;
+        if (val < 1950) e.target.value = 1950;
+      }
+    });
     //Recherche 
     container.querySelector("#search-input").addEventListener("input", (e) => {
       this.searchQuery = e.target.value;
@@ -108,6 +121,9 @@ updateTableOnly(container) {
 
       switch (action) {
         case "edit":
+          // 1. On ferme l'édition sur TOUS les monstres de la liste
+          this.monsters.forEach((m) => (m.isEditing = false));
+          // 2. On active l'édition uniquement sur le monstre cliqué
           monster.isEditing = true;
           onUpdateCallback();
           break;
@@ -118,7 +134,7 @@ updateTableOnly(container) {
           break;
 
         case "delete":
-          if (confirm(`Eliminare ${monster.name}?`)) {
+          if (confirm(`Eliminer ${monster.name}?`)) {
             await DB.delete(id);
             this.monsters = this.monsters.filter((m) => m.id != id);
             onUpdateCallback();
@@ -127,12 +143,25 @@ updateTableOnly(container) {
 
         case "save": {
           const tr = btn.closest("tr");
+          const name = tr.querySelector(".edit-name").value.trim();
+          const danger = parseInt(tr.querySelector(".edit-danger").value);
+          const year = parseInt(tr.querySelector(".edit-year").value);
+          // 1. Vérifier si le nom est vide
+          if (!name) {
+            alert("⚠️ Le nom est requis !");
+            return; // Bloque la sauvegarde
+          }
+          // 1. Vérification simple : si c'est invalide, on bloque et on prévient
+          if (danger < 1 || danger > 5 || year < 1950 || year > 1969) {
+            alert("⚠️ Attention : Le niveau de danger doit être entre 1 et 5, et l'année entre 1950 et 1969 !");
+            return; // Arrête l'exécution, rien n'est envoyé à l'API
+          }
 
           const updatedData = {
-            name: tr.querySelector(".edit-name").value.trim(),
+            name: name,
             type: tr.querySelector(".edit-type").value.trim(),
-            dangerLevel: parseInt(tr.querySelector(".edit-danger").value),
-            year: parseInt(tr.querySelector(".edit-year").value),
+            dangerLevel: danger,
+            year: year,
           };
 
           const updatedMonsterData = await DB.update(id, updatedData);

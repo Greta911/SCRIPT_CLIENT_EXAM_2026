@@ -19,7 +19,7 @@ export default class Monster {
   updateData(data) {
     this.name = data.name;
     this.type = data.type;
-    this.dangerLevel = Number(data.dangerLevel) || 1;
+    this.dangerLevel = Number(data.dangerLevel);
     this.year = Number(data.year);
   }
 

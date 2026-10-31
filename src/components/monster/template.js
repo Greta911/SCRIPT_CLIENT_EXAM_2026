@@ -19,7 +19,7 @@ export default function getTemplate(monster) {
           </select>
         </td>
         <td class="p-3">
-          <input type="number" min="1" max="5" class="edit-danger field w-20" value="${monster.dangerLevel}" />
+          <input type="number" class="edit-danger field w-20" value="${monster.dangerLevel}" />
         </td>
         <td class="p-3">
           <input type="number" class="edit-year field w-24" value="${monster.year}" />
