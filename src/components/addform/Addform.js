@@ -1,6 +1,8 @@
 import getTemplate from "./template";
 
 export default class AddForm {
+
+  //onSubmitCallback = handleAddMonster. J'ai donnée un nom generique pour une question de réutilisabilité
   constructor(onSubmitCallback) {
     this.onSubmitCallback = onSubmitCallback;
   }

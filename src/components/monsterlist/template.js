@@ -14,7 +14,7 @@ export default function getTemplate(monsterList) {
         <h2 class="display text-2xl">The archive</h2>
         <p class="text-[var(--silver)]">
           Creatures on file :
-          <span class="display text-2xl text-[var(--gold)]">${monsterList.monsters.length}</span>
+          <span id="total-monsters-count" class="display text-2xl text-[var(--gold)]">${list.length} / ${total}</span>
         </p>
       </div>
 

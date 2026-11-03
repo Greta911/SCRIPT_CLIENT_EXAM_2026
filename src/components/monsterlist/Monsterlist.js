@@ -6,9 +6,9 @@ export default class MonsterList {
   constructor() {
     this.monsters = [];
     this.searchQuery = "";
-    //Stato per l'ordinamento (Tri)
+    //state pour le triage (Tri)
     this.sortKey = null; //'name', 'type', 'dangerLevel', 'year'
-    this.sortAsc = true;  //true = crescente, false = decrescente
+    this.sortAsc = true;  //true = croissant, false = décroissant
   }
 
   async loadMonsters() {
@@ -31,7 +31,8 @@ export default class MonsterList {
       const terms = this.searchQuery.toLowerCase().trim().split(/\s+/);
       list = list.filter((m) => {
         const textToSearch = `${m.name} ${m.type}`.toLowerCase();
-        return terms.every((term) => textToSearch.includes(term));
+        //some sert à pouvoir chercher un ou l'autre mots tapé et on affichera les deux monstres
+        return terms.some((term) => textToSearch.includes(term));
       });
     }
 
@@ -77,7 +78,7 @@ updateTableOnly(container) {
 
   //Gestion des événements: recherche, triage,modification, sauvegarde et elimination
   bindEvents(container, onUpdateCallback) {
-    // Sécurité en direct pour bloquer les flèches des inputs numériques
+    // Sécurité en direct pour bloquer les flèches des inputs numériques parce la liste n'est pas un formulaire
     container.querySelector("#monsters-table-body").addEventListener("input", (e) => {
       if (e.target.classList.contains("edit-danger")) {
         let val = parseInt(e.target.value);
@@ -93,7 +94,7 @@ updateTableOnly(container) {
     //Recherche 
     container.querySelector("#search-input").addEventListener("input", (e) => {
       this.searchQuery = e.target.value;
-      this.updateTableOnly(container);
+      onUpdateCallback();
     });
 
     //Triage (Click dans les header)
@@ -121,9 +122,9 @@ updateTableOnly(container) {
 
       switch (action) {
         case "edit":
-          // 1. On ferme l'édition sur TOUS les monstres de la liste
+          // On ferme l'édition sur TOUS les monstres de la liste
           this.monsters.forEach((m) => (m.isEditing = false));
-          // 2. On active l'édition uniquement sur le monstre cliqué
+          // On active l'édition uniquement sur le monstre cliqué
           monster.isEditing = true;
           onUpdateCallback();
           break;
@@ -146,24 +147,26 @@ updateTableOnly(container) {
           const name = tr.querySelector(".edit-name").value.trim();
           const danger = parseInt(tr.querySelector(".edit-danger").value);
           const year = parseInt(tr.querySelector(".edit-year").value);
-          // 1. Vérifier si le nom est vide
+          // Securisation des valeurs
+          // Vérifier si le nom est vide
           if (!name) {
             alert("⚠️ Le nom est requis !");
             return; // Bloque la sauvegarde
           }
-          // 1. Vérification simple : si c'est invalide, on bloque et on prévient
+          // Vérification danger et year: si c'est invalide, on bloque et on prévient
           if (danger < 1 || danger > 5 || year < 1950 || year > 1969) {
             alert("⚠️ Attention : Le niveau de danger doit être entre 1 et 5, et l'année entre 1950 et 1969 !");
             return; // Arrête l'exécution, rien n'est envoyé à l'API
           }
 
+          //Regroupement infos mises à jour 
           const updatedData = {
             name: name,
             type: tr.querySelector(".edit-type").value.trim(),
             dangerLevel: danger,
             year: year,
           };
-
+          // Envoi les infos mises à jour à la base de données, mets à jour memoire locale et on redessine le DOM
           const updatedMonsterData = await DB.update(id, updatedData);
           monster.updateData(updatedMonsterData);
           monster.isEditing = false;

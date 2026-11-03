@@ -13,6 +13,8 @@ export default class App {
     this.header = new Header(config.title || "Monster Archive");
     this.footer = new Footer();
     this.monsterList = new MonsterList();
+    //bind(this) rappel que cette fonction appartient à App, peu importe où et par qui elle sera appelée
+    //C'est le moyen de forcer le scope(portée) à rester attaché au bon objet parent pour éviter que le code ne perde le fil
     this.addForm = new AddForm(this.handleAddMonster.bind(this));
   }
 
@@ -20,7 +22,7 @@ export default class App {
     await this.monsterList.loadMonsters();
     this.render();
   }
-
+  //callback qui s'occupe de l'ajout d'un monstre
   async handleAddMonster(newMonsterData) {
     await this.monsterList.addMonster(newMonsterData);
     // Au lieu de tout re-rendre, on met juste à jour la portion tableau/compteur
